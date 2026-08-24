@@ -68,7 +68,9 @@ def get_events(league, api_key):
 
             "oddsFormat": "decimal"
 
-        }
+        },
+
+        timeout=20
 
     )
 
@@ -76,21 +78,37 @@ def get_events(league, api_key):
 
     events = r.json()
 
-    today = datetime.now().date()
+    from datetime import datetime, timezone
+
+    from zoneinfo import ZoneInfo
+
+    stockholm = ZoneInfo("Europe/Stockholm")
+
+    today = datetime.now(stockholm).date()
 
     today_events = []
 
     for event in events:
 
-        match_date = datetime.fromisoformat(
+        try:
 
-            event["commence_time"].replace("Z", "+00:00")
+            start_time = datetime.fromisoformat(
 
-        ).date()
+                event["commence_time"].replace("Z", "+00:00")
 
-        if match_date == today:
+            )
 
-            today_events.append(event)
+            start_time = start_time.astimezone(stockholm)
+
+            # Ta ENDAST matcher som spelas idag
+
+            if start_time.date() == today:
+
+                today_events.append(event)
+
+        except Exception:
+
+            continue
 
     return today_events
 
