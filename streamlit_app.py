@@ -174,7 +174,7 @@ else:
             x=collect_candidates(league,events,model)
             if not x.empty: all_rows.append(x)
         except Exception as e:
-            st.warning(f"{league}: kunde inte analyseras just nu.")
+            st.warning(f"{league}: {e}")
         progress.progress((i+1)/len(selected))
     progress.empty()
 
