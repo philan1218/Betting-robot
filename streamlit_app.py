@@ -48,8 +48,6 @@ def load_history(league):
     return df.dropna(subset=["Date","HomeTeam","AwayTeam","FTHG","FTAG"]).sort_values("Date").reset_index(drop=True)
 
 
-@st.cache_data(ttl=60*30)
-
 def get_events(league, api_key):
 
     _, sport = LEAGUES[league]
@@ -78,27 +76,23 @@ def get_events(league, api_key):
 
     events = r.json()
 
-from datetime import datetime, timezone, timedelta
+    today = datetime.now().date()
 
-now = datetime.now(timezone.utc)
+    today_events = []
 
-tomorrow = now + timedelta(days=1)
+    for event in events:
 
-today_events = []
+        match_date = datetime.fromisoformat(
 
-for event in events:
+            event["commence_time"].replace("Z", "+00:00")
 
-    match_time = datetime.fromisoformat(
+        ).date()
 
-        event["commence_time"].replace("Z", "+00:00")
+        if match_date == today:
 
-    )
+            today_events.append(event)
 
-    if now <= match_time < tomorrow:
-
-        today_events.append(event)
-
-return today_events
+    return today_events
 
 def fit_model(history):
     if len(history)<80:
