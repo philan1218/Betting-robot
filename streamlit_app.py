@@ -142,7 +142,7 @@ st.caption("Premier League • Bundesliga • Serie A • La Liga • Ligue 1")
 
 with st.sidebar:
     st.header("Inställningar")
-    api_key = st.text_input("Odds API-nyckel", type="password", value=os.getenv("ODDS_API_KEY",""))
+    api_key = st.secrets["ODDS_API_KEY"]
     selected = st.multiselect("Ligorna", list(LEAGUES), default=list(LEAGUES))
     run = st.button("🔎 Hitta dagens bästa spel", use_container_width=True)
     st.divider()
