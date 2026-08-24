@@ -78,23 +78,27 @@ def get_events(league, api_key):
 
     events = r.json()
 
-    today = datetime.now().date()
+from datetime import datetime, timezone, timedelta
 
-    today_events = []
+now = datetime.now(timezone.utc)
 
-    for event in events:
+tomorrow = now + timedelta(days=1)
 
-        match_date = datetime.fromisoformat(
+today_events = []
 
-            event["commence_time"].replace("Z", "+00:00")
+for event in events:
 
-        ).date()
+    match_time = datetime.fromisoformat(
 
-        if match_date == today:
+        event["commence_time"].replace("Z", "+00:00")
 
-            today_events.append(event)
+    )
 
-    return today_events
+    if now <= match_time < tomorrow:
+
+        today_events.append(event)
+
+return today_events
 
 def fit_model(history):
     if len(history)<80:
