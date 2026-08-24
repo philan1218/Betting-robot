@@ -64,7 +64,7 @@ def get_events(league, api_key):
 
             "regions": "eu",
 
-            "markets": "h2h,totals,btts",
+            "markets": "h2h,totals",
 
             "oddsFormat": "decimal"
 
