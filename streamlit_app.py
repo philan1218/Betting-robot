@@ -1,5 +1,6 @@
 
 import os, math, requests, pandas as pd, numpy as np, streamlit as st
+from datetime import datetime
 from pathlib import Path
 from scipy.optimize import minimize
 from scipy.stats import poisson
@@ -47,12 +48,53 @@ def load_history(league):
     return df.dropna(subset=["Date","HomeTeam","AwayTeam","FTHG","FTAG"]).sort_values("Date").reset_index(drop=True)
 
 @st.cache_data(ttl=60*30)
+@st.cache_data(ttl=60*30)
+
 def get_events(league, api_key):
-    _, sport=LEAGUES[league]
-    url=f"https://api.the-odds-api.com/v4/sports/{sport}/odds"
-    r=requests.get(url,params={"apiKey":api_key,"regions":"eu","markets":"h2h,totals","oddsFormat":"decimal"})
+
+    _, sport = LEAGUES[league]
+
+    url = f"https://api.the-odds-api.com/v4/sports/{sport}/odds"
+
+    r = requests.get(
+
+        url,
+
+        params={
+
+            "apiKey": api_key,
+
+            "regions": "eu",
+
+            "markets": "h2h,totals,btts",
+
+            "oddsFormat": "decimal"
+
+        }
+
+    )
+
     r.raise_for_status()
-    return r.json()
+
+    events = r.json()
+
+    today = datetime.now().date()
+
+    today_events = []
+
+    for event in events:
+
+        match_date = datetime.fromisoformat(
+
+            event["commence_time"].replace("Z", "+00:00")
+
+        ).date()
+
+        if match_date == today:
+
+            today_events.append(event)
+
+    return today_events
 
 def fit_model(history):
     if len(history)<80:
