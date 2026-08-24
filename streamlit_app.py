@@ -49,8 +49,8 @@ def load_history(league):
 @st.cache_data(ttl=60*30)
 def get_events(league, api_key):
     _, sport=LEAGUES[league]
-    url=f"https://api.the-odds-api.com/v4/sports/{sport}/odds"
-    r=requests.get(url,params={"apiKey":api_key,"regions":"eu","markets":"h2h,totals,btts","oddsFormat":"decimal"},timeout=30)
+    url=f"https://api.the-odds-api.com/v4/sports/{sport}/
+    r=requests.get(url,params={"apiKey":api_key,"regions":"eu","markets":"h2h,totals","oddsFormat":"decimal"})
     r.raise_for_status()
     return r.json()
 
