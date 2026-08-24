@@ -47,7 +47,7 @@ def load_history(league):
     df["FTAG"]=pd.to_numeric(df["FTAG"],errors="coerce")
     return df.dropna(subset=["Date","HomeTeam","AwayTeam","FTHG","FTAG"]).sort_values("Date").reset_index(drop=True)
 
-@
+
 @st.cache_data(ttl=60*30)
 
 def get_events(league, api_key):
